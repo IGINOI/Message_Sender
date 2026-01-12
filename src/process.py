@@ -9,7 +9,7 @@ import shutil
 
 from config import today, range_of_days
 from config import appointments_file_path
-from config import shut_down
+import config
 
 
 
@@ -101,16 +101,20 @@ def start_gui(week_days_in_range):
 
     def request_system_shotdown():
         # ask whether at the end of the message sending the system has to be shutdown
-        global shut_down
         if messagebox.askyesno("Conferma Spegnimento", "Vuoi spegnere il sistema dopo l'invio dei messaggi?", default=messagebox.NO):
-            shut_down = True
+            config.shut_down = True
         else:
-            shut_down = False
+            config.shut_down = False
         
         send_message()
 
     def send_message():
         # Save the selected indexes and close the GUI
+        config.send_wamessage = True
+        root.destroy()
+    
+    def print_messages():
+        config.send_wamessage = False
         root.destroy()
 
     def on_close():
@@ -145,8 +149,19 @@ def start_gui(week_days_in_range):
         toggle_button.grid(row=i % 7, column=i // 7, padx=10, pady=5, sticky='w')  # Arrange in columns of 7
 
     # Add "Send Messages" button at the bottom
-    send_button = ttk.Button(root, text="Invia Messaggi", command=request_system_shotdown)
-    send_button.pack(pady=20)
+    # print_button = ttk.Button(root, text="Stampa Messaggi", command=print_messages)
+    # print_button.pack(pady=20)
+    # send_button = ttk.Button(root, text="Invia Messaggi", command=request_system_shotdown)
+    # send_button.pack(pady=20)
+
+    # Put print_button and send_button side by side
+    button_frame = ttk.Frame(root)
+    button_frame.pack(pady=10)
+    print_button = ttk.Button(button_frame, text="Stampa Messaggi", command=print_messages)
+    print_button.grid(row=0, column=0, padx=20)
+    send_button = ttk.Button(button_frame, text="Invia Messaggi", command=request_system_shotdown)
+    send_button.grid(row=0, column=1, padx=20)
+
 
     root.mainloop()
 

@@ -8,7 +8,8 @@ import pyautogui as pg
 import time
 import webbrowser as web
 
-from config import send_wamessage, today
+import config
+from config import today
 
 WIDTH, HEIGHT = pg.size()
 
@@ -71,7 +72,7 @@ def send_message_thread(appointments_with_contact, window, label_widget):
         # Update GUI Label
         label_widget.config(text=f"Invio {i+1} di {len(appointments_with_contact)}")
         
-        if send_wamessage:
+        if config.send_wamessage:
             send_whatsapp('+' + str(appointment["Telephone"]), wa_message, wait_time=20, tab_close=True)
         else:
             print(f"{wa_message}")
