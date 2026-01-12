@@ -28,13 +28,13 @@ jobs:
 
     - name: Build exe
       run: |
-        pyinstaller --onefile Message_Sender.py
+        pyinstaller --onefile src/main.py
 
     # This creates the release and uploads the raw .exe
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
-        files: dist/Message_Sender.exe
+        files: dist/main.exe
         name: Message Sender ${{ github.ref_name }}
         generate_release_notes: true
       env:

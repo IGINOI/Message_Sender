@@ -1,30 +1,16 @@
 import pandas as pd
 import datetime
 import locale
-import pywhatkit as kit
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import os
 import shutil
-import threading
 
-# Set fake date for testing
-#today = datetime.date.today() 
-today = datetime.date(2025, 12, 29) 
-# Range of days
-range_of_days = 21
+from config import today, range_of_days
+from config import appointments_file_path
+from config import shut_down
 
-# global path to the appointements folder
-appointments_file_path = f'C:/Users/david/Documents/CENTRO_FIT/APPUNTAMENTI'
-# Perform backup of the appointments file
-backup_enabled = False
-# Send messages on WA
-send_wamessage = True
-# Shutdown the system after sending messages
-shut_down = False
-# Kill switch variable
-continue_sending = True
 
 
 def backup():
@@ -250,88 +236,3 @@ def filter_non_empty_appointments(Appointments_file, appointments):
 
 
     return appointments_with_contact
-
-
-def show_progress_window(appointments_with_contact):
-    global continue_sending
-    continue_sending = True
-    
-    progress_root = tk.Tk()
-    progress_root.title("Invio Messaggi")
-    #progress_root.geometry("300x150")
-
-    window_width = 300
-    window_height = 150
-
-    screen_width = progress_root.winfo_screenwidth()
-    screen_height = progress_root.winfo_screenheight()
-    
-    # Calculate coordinates for bottom-right corner
-    # (Subtracting a bit extra like 50px to account for the Taskbar)
-    x = screen_width - window_width - 10
-    y = screen_height - window_height - 60
-    
-    progress_root.geometry(f"{window_width}x{window_height}+{x}+0")
-    progress_root.attributes("-topmost", True)
-
-    label = ttk.Label(progress_root, text="Invio in corso...", font=("Helvetica", 10))
-    label.pack(pady=20)
-
-    def stop_process():
-        global continue_sending
-        if messagebox.askyesno("Stop", "Vuoi davvero interrompere l'invio?"):
-            continue_sending = False
-            label.config(text="Interruzione in corso...")
-
-    stop_button = ttk.Button(progress_root, text="STOP INVIO", command=stop_process)
-    stop_button.pack(pady=10)
-
-    # Start the sending logic in a background thread so the GUI stays responsive
-    threading.Thread(target=send_message_thread, args=(appointments_with_contact, progress_root, label), daemon=True).start()
-
-    progress_root.mainloop()
-
-def send_message_thread(appointments_with_contact, window, label_widget):
-    global continue_sending
-    
-    for i, appointment in enumerate(appointments_with_contact):
-        # CHECK IF STOP WAS CLICKED
-        if not continue_sending:
-            print("Invio interrotto dall'utente.")
-            break
-
-        # Logic for message content
-        if appointment['Employee'] != 'Paola':
-            wa_message = (f"\nBuongiorno {appointment['Customer'][0]}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie!\nRicordiamo, per chi non avesse ancora provveduto, di portare l'impegnativa 'ciclo di massoterapia' per l'anno {today.year}.\nCentro Fit Roncegno Terme - Via Boschetti, 2")
-        else:
-            wa_message = (f"\nBuongiorno {appointment['Customer'][0]}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie!\nCentro Fit Roncegno Terme - Via Boschetti, 2")
-
-        # Update GUI Label
-        label_widget.config(text=f"Invio {i+1} di {len(appointments_with_contact)}")
-        
-        if send_wamessage:
-            kit.sendwhatmsg_instantly('+' + str(appointment["Telephone"]), wa_message, wait_time=20, tab_close=False)
-        else:
-            print(f"{wa_message}")
-            import time
-            time.sleep(0.5) # Simulating delay for testing
-
-    window.destroy()
-
-
-
-if __name__ == "__main__":
-    # Perform backup if needed
-    if backup_enabled:
-        backup()
-    
-    # Read the files and extract all the apoointments in the selected days
-    appointments_with_contact = main()
-
-    # Send the messages using pywhatkit
-    show_progress_window(appointments_with_contact)
-    
-    # Shutdown the system if needed
-    if shut_down:
-        print("SUTTING DOWN SYSTEM")
-        os.system('shutdown /s /t 5')
