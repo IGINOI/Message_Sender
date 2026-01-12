@@ -1,0 +1,41 @@
+name: Build Windows EXE
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    # Added permissions to allow the bot to create the release
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build exe
+      run: |
+        pyinstaller --onefile Message_Sender.py
+
+    # This creates the release and uploads the raw .exe
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: dist/Message_Sender.exe
+        name: Message Sender ${{ github.ref_name }}
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
