@@ -13,6 +13,8 @@ Here is a list of all the files you can find in this repository and their duty.
     A new feature is added.
 - Fix:\
     A bug was fixed
+- Chan:\
+    A little change for a better code compatibility
 - Real:\
     Changes in the workflow of the releases
 
