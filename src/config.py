@@ -6,8 +6,8 @@ VERSION = "2.2.0" # Change this for every release
 REPO = "IGINOI/Message_Sender"
 
 # Set fake date for testing
-# today = datetime.date.today() 
-today = datetime.date(2025, 12, 29) 
+today = datetime.date.today() 
+# today = datetime.date(2025, 12, 29) 
 # Range of days
 range_of_days = 21
 

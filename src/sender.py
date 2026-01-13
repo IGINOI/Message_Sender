@@ -73,7 +73,7 @@ def send_message_thread(appointments_with_contact, window, label_widget):
         label_widget.config(text=f"Invio {i+1} di {len(appointments_with_contact)}")
         
         if config.send_wamessage:
-            send_whatsapp('+' + str(appointment["Telephone"]), wa_message, wait_time=20, tab_close=True)
+            send_whatsapp('+' + str(appointment["Telephone"]), wa_message, wait_time=30, tab_close=True, close_time=10)
         else:
             print(f"{wa_message}")
             import time
@@ -105,15 +105,17 @@ def send_whatsapp(phone_no: str, message: str, wait_time: int = 15, tab_close: b
     # Wait for the Page to load
     time.sleep(wait_time - 5)
     # Click on the screen to make it active
-    pg.click(WIDTH / 2, HEIGHT / 2)
+    pg.click(WIDTH / 2 + 300, HEIGHT / 2)
     # Wait to be sure the page is active
-    time.sleep(1)
+    time.sleep(5)
     # Press 'Enter' to send the message
     pg.press("enter")
     # Wait for the message to be sent
-    time.sleep(4)
+    time.sleep(5)
     # Log the message
     # log.log_message(_time=time.localtime(), receiver=phone_no, message=message)
     if tab_close:
-        close_tab(wait_time = close_time - 3)
-    time.sleep(3)
+        close_tab(wait_time = close_time)
+    time.sleep(5)
+    pg.press("enter")
+    time.sleep(5)
