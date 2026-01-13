@@ -58,9 +58,9 @@ def preprocess_appointments(Appointments_file):
 
     for sheet_name in sheets_name:
         if sheet_name == "Contatti":
-            Processed_appointments[sheet_name] = pd.read_excel(Appointments_file, sheet_name=sheet_name, header=1)
+            Processed_appointments[sheet_name] = pd.read_excel(Appointments_file, sheet_name=sheet_name, header=0)
         else:
-            month_sheet = pd.read_excel(Appointments_file, sheet_name=sheet_name, header=1)
+            month_sheet = pd.read_excel(Appointments_file, sheet_name=sheet_name, header=0)
             for i in range(len(month_sheet)-1):
                 next_line = month_sheet.loc[i+1, "Giorno"]
                 if pd.isna(next_line) or str(next_line).strip() == "":            
