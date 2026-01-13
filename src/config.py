@@ -2,7 +2,7 @@ import datetime
 import sys
 from pathlib import Path
 
-VERSION = "2.3.1" # Change this for every release
+VERSION = "2.3.2" # Change this for every release
 REPO = "IGINOI/Message_Sender"
 
 # Set fake date for testing
