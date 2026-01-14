@@ -7,15 +7,13 @@ from tkinter import messagebox
 import os
 import shutil
 
-from config import today, range_of_days
-from config import appointments_file_path
 import config
 
 
 
 def backup():
-    source_path = f'{appointments_file_path}/Appuntamenti_{today.year}.xlsx'  # Replace with your file's source path
-    destination_path = f'{appointments_file_path}/BACKUPS/Appuntamenti_{pd.Timestamp.now().strftime("%Y.%m.%d_%H.%M")}.xlsx'
+    source_path = f'{config.appointments_file_path}/Appuntamenti_{config.today.year}.xlsx'  # Replace with your file's source path
+    destination_path = f'{config.appointments_file_path}/BACKUPS/Appuntamenti_{pd.Timestamp.now().strftime("%Y.%m.%d_%H.%M")}.xlsx'
 
     # Ensure the source file exists
     if os.path.exists(source_path):
@@ -30,7 +28,7 @@ def backup():
 
 def main():
     # Read all sheets at once and preprocess the columns
-    Appointments_file = pd.ExcelFile(f"{appointments_file_path}/Appuntamenti_{today.year}.xlsx")
+    Appointments_file = pd.ExcelFile(f"{config.appointments_file_path}/Appuntamenti_{config.today.year}.xlsx")
     Appointments_file = preprocess_appointments(Appointments_file)
 
     # Extract the 7 days after today from the contacts sheet
@@ -74,8 +72,8 @@ def extract_days():
     locale.setlocale(locale.LC_TIME, "it-IT")
     days_list = []
 
-    for i in range(range_of_days):
-        day = today + datetime.timedelta(days=i)
+    for i in range(config.range_of_days):
+        day = config.today + datetime.timedelta(days=i)
         # %A -> weekday, %d -> day, %B -> month
         text = f"{day.strftime('%A')} {day.day} {day.strftime('%B')}" #day.strftime("%A %d %B")
         

@@ -9,13 +9,10 @@ import time
 import webbrowser as web
 
 import config
-from config import today
 
 WIDTH, HEIGHT = pg.size()
 
 def show_progress_window(appointments_with_contact):
-    global continue_sending
-    continue_sending = True
     
     progress_root = tk.Tk()
     progress_root.title("Invio Messaggi")
@@ -39,15 +36,14 @@ def show_progress_window(appointments_with_contact):
     label.pack(pady=20)
 
     def stop_process():
-        global continue_sending
         if messagebox.askyesno("Stop", "Vuoi davvero interrompere l'invio?"):
-            continue_sending = False
+            config.continue_sending = False
             label.config(text="Interruzione in corso...")
 
-    stop_button = ttk.Button(progress_root, text="FERMA INVIO\n  MESSAGGI", command=stop_process)
+    stop_button = ttk.Button(progress_root, text="ANNULLA L'INVIO DEI\n MESSAGGI RESTANTI", command=stop_process)
     stop_button.pack(pady=10)
     # increase stop button size and font
-    stop_button.config(width=15)
+    stop_button.config(width=22)
 
     # Start the sending logic in a background thread so the GUI stays responsive
     threading.Thread(target=send_message_thread, args=(appointments_with_contact, progress_root, label), daemon=True).start()
@@ -55,67 +51,65 @@ def show_progress_window(appointments_with_contact):
     progress_root.mainloop()
 
 def send_message_thread(appointments_with_contact, window, label_widget):
-    global continue_sending
+    if config.shut_down:
+        multiplier = 2
+    else:
+        multiplier = 1
+
+    # Clear the verification file if it exists
+    with open("Verifica_Messaggi.txt", "w", encoding="utf-8") as f:
+        f.write(f"MESSAGGI DA MANDARE: {len(appointments_with_contact)}\n\n\n")
     
     for i, appointment in enumerate(appointments_with_contact):
         # CHECK IF STOP WAS CLICKED
-        if not continue_sending:
+        if not config.continue_sending:
             print("Invio interrotto dall'utente.")
             break
 
         # Logic for message content
         if appointment['Employee'] != 'Paola':
-            wa_message = (f"\nBuongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie!\nRicordiamo, per l'anno {today.year}, di portare l'impegnativa 'ciclo di massoterapia'.\nCentro Fit Roncegno Terme - Via Boschetti, 2")
+            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nRicordiamo, per l'anno {config.today.year}, di portare l'impegnativa 'ciclo di massoterapia'.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
         else:
-            wa_message = (f"\nBuongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie!\nCentro Fit Roncegno Terme - Via Boschetti, 2")
+            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
 
         # Update GUI Label
         label_widget.config(text=f"Invio {i+1} di {len(appointments_with_contact)}")
         
         if config.send_wamessage:
-            send_whatsapp('+' + str(appointment["Telephone"]), wa_message, wait_time=30, tab_close=True, close_time=10)
+            # Print the message in the file and send them via WhatsApp
+            print_message(appointment)
+            send_whatsapp('+' + str(appointment["Telephone"]), wa_message, multiplier=multiplier)
         else:
-            print(f"{wa_message}")
-            import time
-            time.sleep(0.5) # Simulating delay for testing
+            # Print the messages in the file
+            print_message(appointment)
 
     window.destroy()
 
- 
-def close_tab(wait_time: int = 2) -> None:
-    """Closes the Currently Opened Browser Tab"""
-    time.sleep(wait_time)
+def print_message(appointment):
+    with open("Verifica_Messaggi.txt", "a", encoding="utf-8") as f:
+        f.write(f"{appointment['Customer'][0]}\n")
+        f.write(f"{appointment['Giorno']} {appointment['Mese']} - {appointment['Ora']}\n")
+        f.write(f"{appointment['Employee']}\n\n")
+
+def send_whatsapp(phone_no: str, message: str, multiplier: int = 1) -> None:
+    """Send WhatsApp Message"""
+
+    # Open Web Page & wait for it to load
+    web.open(f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}")
+    time.sleep(25 * multiplier)
+    
+    # Select page & wait
+    pg.click(WIDTH / 2 + 300, HEIGHT / 2)
+    time.sleep(10 * multiplier)
+    
+    # Press 'Enter' & wait for the message to be sent
+    pg.press("enter")
+    time.sleep(15 * multiplier)
+    
+    # Close tab and wait for it to close
     hotkey("ctrl", "w")
     press("enter")
-
-def check_number(number: str) -> bool:
-    """Checks the Number to see if contains the Country Code"""
-
-    return "+" in number or "_" in number
-
-def send_whatsapp(phone_no: str, message: str, wait_time: int = 15, tab_close: bool = True, close_time: int = 3) -> None:
-    """Send WhatsApp Message Instantly"""
-
-    # If the number is not recognized, skip sending the message
-    # if not check_number(number=phone_no):
-    #     raise Exception("Country Code Missing in Phone Number!")
-
-    # Open Web Page
-    web.open(f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}")
-    # Wait for the Page to load
-    time.sleep(wait_time - 5)
-    # Click on the screen to make it active
-    pg.click(WIDTH / 2 + 300, HEIGHT / 2)
-    # Wait to be sure the page is active
-    time.sleep(5)
-    # Press 'Enter' to send the message
+    time.sleep(5 * multiplier)
+    
     pg.press("enter")
-    # Wait for the message to be sent
-    time.sleep(5)
-    # Log the message
-    # log.log_message(_time=time.localtime(), receiver=phone_no, message=message)
-    if tab_close:
-        close_tab(wait_time = close_time)
-    time.sleep(5)
-    pg.press("enter")
-    time.sleep(5)
+    time.sleep(5 * multiplier)

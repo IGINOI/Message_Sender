@@ -6,20 +6,22 @@ Here is a list of all the files you can find in this repository and their duty.
 - Message_Sender.py:\
     This is the program that reas the .ods file and sends the message via WhatsApphe.\
 - Send_Messages.bat:\
-    The .bat file has the same function of the backput.bat file. 
+    The .bat file has the same function of the backput.bat file.
 
 ## Commits types
-- Chan:\
-    A little change for a better code compatibility
 - Feat:\
-    A new feature is added.
+    A new feature was added.
 - Fix:\
-    A bug was fixed
+    A bug causing unwanted behaviours was fixed.
 - Real:\
-    Changes in the workflow of the releases
+    The GitHub workflow suffered some modification.
+- Ref:\
+    The code was refactored, however the functionalities remains unchanged.
+- Tag:\
+    A version/tag was modified.
 
 ## Versioning Strategy - vMAJOR.MINOR.PATCH
-- v1.0.0 → first customer release
-- v1.0.1 → bug fix
-- v1.1.0 → new feature
-- v2.0.0 → breaking change
+- v1.0.0 → First Release
+- v1.0.1 → Bug Rix / Code Refactory
+- v1.1.0 → New Feature
+- v2.0.0 → Breaking Change
