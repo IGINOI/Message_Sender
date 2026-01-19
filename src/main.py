@@ -21,6 +21,6 @@ if __name__ == "__main__":
     show_progress_window(appointments_with_contact)
     
     # Shutdown the system if needed
-    if config.shut_down:
+    if config.shut_down and config.continue_sending:
         print("SUTTING DOWN SYSTEM")
         os.system('shutdown /s /t 5')
