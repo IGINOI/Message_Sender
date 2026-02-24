@@ -231,7 +231,7 @@ def filter_non_empty_appointments(Appointments_file, appointments):
             cognome = ""
         
         full_name = (nome + " " + cognome).strip()
-        telefono = str(row.get("Cellulare")).strip()
+        telefono = parse_telephone_number(str(row.get("Cellulare")).strip())
         contacts_lookup.append({
             "full_name": full_name,
             "Telephone": telefono })
@@ -249,3 +249,16 @@ def filter_non_empty_appointments(Appointments_file, appointments):
 
 
     return appointments_with_contact
+
+def parse_telephone_number(telephone):
+    if telephone.endswith(".0"):
+        telephone = telephone[:-2]  # Remove the trailing ".0" if it's a float representation of an integer
+    
+    if telephone.startswith('3') and len(telephone) == 10:
+        return '+39' + telephone
+    elif telephone.startswith('+') and len(telephone) == 13:
+        return telephone  # Keep the + sign
+    elif telephone.startswith('00') and len(telephone) == 14:
+        return '+' + telephone[2:]  # Remove the "00" prefix and add +
+    else:
+        return telephone  # Return as is if it doesn't match expected formats

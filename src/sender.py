@@ -89,6 +89,7 @@ def print_message(appointment):
     with open("Verifica_Messaggi.txt", "a", encoding="utf-8") as f:
         f.write(f"{appointment['Customer'][0]}\n")
         f.write(f"{appointment['Giorno']} {appointment['Mese']} - {appointment['Ora']}\n")
+        f.write(f"{appointment['Telephone'][0:3]} {appointment['Telephone'][3:]}\n")
         f.write(f"{appointment['Employee']}\n\n")
 
 def send_whatsapp(phone_no: str, message: str, multiplier: int = 1) -> None:
