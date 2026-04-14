@@ -22,6 +22,6 @@ Here is a list of all the files you can find in this repository and their duty.
 
 ## Versioning Strategy - vMAJOR.MINOR.PATCH
 - v1.0.0 → First Release
-- v1.0.1 → Bug Rix / Code Refactory
+- v1.0.1 → Bug Rix / Code Refactory / Little Changes
 - v1.1.0 → New Feature
 - v2.0.0 → Breaking Change

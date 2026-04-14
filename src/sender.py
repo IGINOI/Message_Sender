@@ -68,7 +68,7 @@ def send_message_thread(appointments_with_contact, window, label_widget):
 
         # Logic for message content
         if appointment['Employee'] != 'Paola':
-            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nRicordiamo, per l'anno {config.today.year}, di portare l'impegnativa 'ciclo di massoterapia'.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
+            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nQualora non lo avesse già fatto, ricordiamo di portare l'impegnativa 'ciclo di massoterapia' che dal 2026 ha una validità di 6 mesi.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
         else:
             wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
 
