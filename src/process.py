@@ -114,7 +114,7 @@ def start_gui(week_days_in_range):
 
     def print_messages():
         config.send_wamessage = False
-        config.custom_message = ""
+        config.custom_message = message_text.get("1.0", tk.END).strip()
         root.destroy()
 
     def on_close():
