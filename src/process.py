@@ -109,10 +109,12 @@ def start_gui(week_days_in_range):
     def send_message():
         # Save the selected indexes and close the GUI
         config.send_wamessage = True
+        config.custom_message = message_text.get("1.0", tk.END).strip()
         root.destroy()
-    
+
     def print_messages():
         config.send_wamessage = False
+        config.custom_message = ""
         root.destroy()
 
     def on_close():
@@ -133,6 +135,15 @@ def start_gui(week_days_in_range):
     # Add a label at the top
     title_label = ttk.Label(root, text="Avvisa le persone con appuntamento nei seguenti giorni: ", font=("Helvetica", 14, "bold"))
     title_label.pack(pady=10)
+
+    message_label = ttk.Label(
+        root,
+        text="Messaggio personalizzato (lascia vuoto per usare quello predefinito):",
+        font=("Helvetica", 11),
+    )
+    message_label.pack(pady=(5, 2))
+    message_text = tk.Text(root, height=5, width=75, wrap=tk.WORD)
+    message_text.pack(padx=10, pady=(0, 10))
 
     # Create a frame for the day selection grid
     grid_frame = ttk.Frame(root)

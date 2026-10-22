@@ -2,15 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import threading
-from pyautogui import hotkey, press
 from urllib.parse import quote
-import pyautogui as pg
 import time
 import webbrowser as web
 
 import config
-
-WIDTH, HEIGHT = pg.size()
 
 def show_progress_window(appointments_with_contact):
     
@@ -66,11 +62,9 @@ def send_message_thread(appointments_with_contact, window, label_widget):
             print("Invio interrotto dall'utente.")
             break
 
-        # Logic for message content
-        if appointment['Employee'] != 'Paola':
-            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nQualora non lo avesse già fatto, ricordiamo di portare l'impegnativa 'ciclo di massoterapia' che dal 2026 ha una validità di 6 mesi.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
-        else:
-            wa_message = (f"Buongiorno {appointment['Customer'][0].split()[-1].capitalize()}, ricordiamo l'appuntamento di {appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\nAttendiamo conferma, grazie.\nCentro Fit Roncegno Terme - Via Boschetti, 2.")
+        # Use the GUI message when one was entered; otherwise keep the
+        # appointment-specific default reminder.
+        wa_message = config.custom_message or default_appointment_message(appointment)
 
         # Update GUI Label
         label_widget.config(text=f"Invio {i+1} di {len(appointments_with_contact)}")
@@ -85,6 +79,20 @@ def send_message_thread(appointments_with_contact, window, label_widget):
 
     window.destroy()
 
+def default_appointment_message(appointment):
+    customer_last_name = appointment['Customer'][0].split()[-1].capitalize()
+    appointment_details = (
+        f"Buongiorno {customer_last_name}, ricordiamo l'appuntamento di "
+        f"{appointment['Giorno']} {appointment['Mese']} alle {appointment['Ora']}.\n"
+        "Attendiamo conferma, grazie.\n"
+    )
+    if appointment['Employee'] != 'Paola':
+        appointment_details += (
+            "Qualora non lo avesse già fatto, ricordiamo di portare l'impegnativa "
+            "'ciclo di massoterapia' che dal 2026 ha una validità di 6 mesi.\n"
+        )
+    return appointment_details + "Centro Fit Roncegno Terme - Via Boschetti, 2."
+
 def print_message(appointment):
     with open("Verifica_Messaggi.txt", "a", encoding="utf-8") as f:
         f.write(f"{appointment['Customer'][0]}\n")
@@ -94,13 +102,19 @@ def print_message(appointment):
 
 def send_whatsapp(phone_no: str, message: str, multiplier: int = 1) -> None:
     """Send WhatsApp Message"""
+    # pyautogui connects to the X display during import, so load it only
+    # when a message is actually being sent.
+    import pyautogui as pg
+    from pyautogui import hotkey, press
+
+    width, height = pg.size()
 
     # Open Web Page & wait for it to load
     web.open(f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}")
     time.sleep(25 * multiplier)
     
     # Select page & wait
-    pg.click(WIDTH / 2 + 300, HEIGHT / 2)
+    pg.click(width / 2 + 300, height / 2)
     time.sleep(10 * multiplier)
     
     # Press 'Enter' & wait for the message to be sent

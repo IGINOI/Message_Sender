@@ -2,7 +2,7 @@ import datetime
 import sys
 from pathlib import Path
 
-VERSION = "2.4.2" # Change this for every release
+VERSION = "2.5" # Change this for every release
 REPO = "IGINOI/Message_Sender"
 
 # Set fake date for testing
@@ -29,6 +29,8 @@ appointments_file_path = base_dir
 backup_enabled = False
 # Send messages on WA
 send_wamessage = False
+# Optional message entered in the GUI. A blank value uses the default reminder.
+custom_message = ""
 # Shutdown the system after sending messages
 shut_down = False
 # Kill switch variable

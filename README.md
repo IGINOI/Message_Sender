@@ -25,3 +25,18 @@ Here is a list of all the files you can find in this repository and their duty.
 - v1.0.1 → Bug Rix / Code Refactory / Little Changes
 - v1.1.0 → New Feature
 - v2.0.0 → Breaking Change
+
+## Commit & Realese
+To commit some changes:
+```python
+git add .
+git commit -m "Update message handling"
+git push origin main
+```
+
+To create a new release:
+```python
+git tag v2.4.3
+git push origin v2.4.3
+```
+N.B. > Change the config.py file to with the correct version
