@@ -1,2 +1,10 @@
-.venv/*
+# Folders
+BACKUPS/
+ALTRO/
 src/__pycache__/*
+.venv/*
+
+# Files
+Appuntamenti_*.xlsx
+Prove_Fit.txt
+Verifica_Messaggi.txt

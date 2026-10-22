@@ -55,6 +55,11 @@ def send_message_thread(appointments_with_contact, window, label_widget):
     # Clear the verification file if it exists
     with open("Verifica_Messaggi.txt", "w", encoding="utf-8") as f:
         f.write(f"MESSAGGI DA MANDARE: {len(appointments_with_contact)}\n\n\n")
+        f.write(f"ESEMPIO DI MESSAGGIO:\n\n")
+        if config.custom_message:
+            f.write(f"{config.custom_message}\n\n")
+        else:
+            f.write(f"{default_appointment_message(appointments_with_contact[0])}\n\n")
     
     for i, appointment in enumerate(appointments_with_contact):
         # CHECK IF STOP WAS CLICKED
